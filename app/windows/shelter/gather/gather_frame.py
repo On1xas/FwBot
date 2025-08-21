@@ -6,7 +6,7 @@ from app.utils.resourse_path import resource_path
 from app.service.clicker_manager import ClickerManager
 from app.service.task_manager import TaskManager
 from app.config.config_manager import ConfigManager
-from app.service.game_object_service_OLD import GameObjectService
+from app.service.game_object_service import GameObjectService
 from app.service.locale_service import Localization
 from app.service.window_manager import WindowManager
 from app.logging import logger

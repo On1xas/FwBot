@@ -9,7 +9,7 @@ from app.logging import logger
 from app.service.task_manager import TaskManager
 from app.service.clicker_manager import ClickerManager
 from app.service.window_manager import WindowManager
-from app.service.game_object_service_OLD import GameObjectService
+from app.service.game_object_service import GameObjectService
 from app.service.locale_service import Localization
 
 from app.windows.main_frames.user_frame import UserFrame

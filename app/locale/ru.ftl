@@ -96,9 +96,9 @@ gather-choose-param-terry-ally = Копаем только на
 gather-stats-entry =
     { $resource } — собрано: { $gathered }, заданий: { $tasks }
 gather-poisk = app\\windows\\shelter\\gather\\img\\poisk.png
-gather-button = app\\windows\\shelter\\gather\\img\\gather.png
-gather-create-group = app\\windows\\shelter\\gather\\img\\create_group.png
-gather-marsh = app\\windows\\shelter\\gather\\img\\go_gather.png
+gather-button = app\\windows\\shelter\\gather\\img\\sbor.png
+gather-create-group = app\\windows\\shelter\\gather\\img\\sbor-create-group.png
+gather-marsh = app\\windows\\shelter\\gather\\img\\marsh.png
 
 # TAKE SHOP
 

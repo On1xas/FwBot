@@ -1,5 +1,6 @@
 import time
 import datetime
+from pygetwindow import PyGetWindowException
 from app.utils.resourse_path import resource_path
 from app.utils.cv import find_template_matches, find_template_matches_color, find_template_simple, filter_coordinates
 from app.utils.datetime_lib import has_time_passed
@@ -48,6 +49,104 @@ class GameObjectService():
         self.rally_task = {}
         self.transfer_task = {}
         self.zombi_task = {}
+
+
+
+
+    @check_stop_func
+    def go_to_shelter(self):
+        logger.info(msg=f"GAME OBJECT SERVICE: CHECK REGION FUNC")
+        path_region_btn = resource_path(relative_path="app\\img\\game_button\\go-region.png")
+        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\go-shelter.png")
+
+        while not self.task_manager.stop_event.is_set():
+            coord_region = find_template_matches(path_region_btn)
+            coord_shelter = find_template_matches(path_shelter_btn)
+            if coord_region and not self.task_manager.stop_event.is_set():
+                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
+                self.clicker_manager.click(coord_region[0][0], coord_region[0][1])
+                time.sleep(3)
+
+            elif coord_shelter and not self.task_manager.stop_event.is_set():
+                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
+                break
+            else:
+                self.clicker_manager.press_ecs()
+                time.sleep(3)
+
+    @check_stop_func
+    def go_to_region(self):
+        logger.info(msg=f"GAME OBJECT SERVICE: CHECK REGION FUNC")
+        path_region_btn = resource_path(relative_path="app\\img\\game_button\\go-region.png")
+        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\go-shelter.png")
+
+        while not self.task_manager.stop_event.is_set():
+            if coord_region := find_template_matches(path_region_btn):
+                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
+                break
+            elif coord_shelter := find_template_matches(path_shelter_btn):
+                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
+                self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
+                time.sleep(3)
+            else:
+                self.clicker_manager.press_ecs()
+                time.sleep(3)
+
+    def go_to_after_shift(self):
+        logger.info(msg=f"GAME OBJECT SERVICE: GO TO AFTER SHIFT FUNC")
+        path_region_btn = resource_path(relative_path="app\\img\\game_button\\go-region.png")
+        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\go-shelter.png")
+
+        while not self.task_manager.stop_event.is_set():
+            coord_region = find_template_matches(path_region_btn)
+            coord_shelter = find_template_matches(path_shelter_btn)
+            if coord_region and not self.task_manager.stop_event.is_set():
+                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
+                self.clicker_manager.click(coord_region[0][0], coord_region[0][1])
+                time.sleep(3)
+                self.go_to_shelter()
+                time.sleep(2)
+                break
+            elif coord_shelter and not self.task_manager.stop_event.is_set():
+                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
+                self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
+                time.sleep(3)
+                self.go_to_region()
+                time.sleep(2)
+                self.go_to_shelter()
+                time.sleep(2)
+                break
+            else:
+                self.clicker_manager.press_ecs()
+                time.sleep(3)
+        return
+
+    def hide_discont(self):
+        logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT START")
+        self.go_to_region()
+
+        # path_zombi_icon = resource_path(relative_path="app\\img\\game_button\\zombi-war-icon.png")
+        # coord_zombi_war_icon = find_template_matches(path_zombi_icon, threshold=0.8)
+        # if coord_zombi_war_icon and not self.task_manager.stop_event.is_set():
+        #     logger.info(msg="GAME OBJECT SERVICE: GET ZOMBI WAR EVENT")
+        #     self.clicker_manager.click(coord_zombi_war_icon[0][0], coord_zombi_war_icon[0][1])
+        #     time.sleep(3)
+        #     self.clicker_manager.press_ecs()
+        #     time.sleep(3)
+
+
+
+        path_hide = resource_path(relative_path="app\\windows\\shelter\\daily\\img\\hide_actions.png")
+        coord_hide = find_template_matches(path_hide)
+        if coord_hide:
+            logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT BTN FIND")
+            self.clicker_manager.click(coord_hide[0][0], coord_hide[0][1])
+            time.sleep(1)
+            self.go_to_shelter()
+            time.sleep(3)
+        else:
+            logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT BTN UNDEFIND")
+            self.go_to_shelter()
 
 
 
@@ -367,100 +466,6 @@ class GameObjectService():
             logger.info(msg="GAME OBJECT SERVICE: BUFF GATHER - BUFF GATHER 8H OR 24H IN BAG DONT DETECTED")
             self.go_to_shelter()
         self.go_to_shelter()
-
-    @check_stop_func
-    def go_to_shelter(self):
-        logger.info(msg=f"GAME OBJECT SERVICE: CHECK REGION FUNC")
-        path_region_btn = resource_path(relative_path="app\\img\\game_button\\check_shelter.png")
-        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\region_button.png")
-
-        while not self.task_manager.stop_event.is_set():
-            coord_region = find_template_matches(path_region_btn)
-            coord_shelter = find_template_matches(path_shelter_btn)
-            if coord_region and not self.task_manager.stop_event.is_set():
-                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
-                self.clicker_manager.click(coord_region[0][0], coord_region[0][1])
-                time.sleep(3)
-
-            elif coord_shelter and not self.task_manager.stop_event.is_set():
-                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
-                break
-            else:
-                self.clicker_manager.press_ecs()
-                time.sleep(3)
-
-    @check_stop_func
-    def go_to_region(self):
-        logger.info(msg=f"GAME OBJECT SERVICE: CHECK REGION FUNC")
-        path_region_btn = resource_path(relative_path="app\\img\\game_button\\check_shelter.png")
-        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\region_button.png")
-
-        while not self.task_manager.stop_event.is_set():
-            if coord_region := find_template_matches(path_region_btn):
-                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
-                break
-            elif coord_shelter := find_template_matches(path_shelter_btn):
-                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
-                self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
-                time.sleep(3)
-            else:
-                self.clicker_manager.press_ecs()
-                time.sleep(3)
-
-    def go_to_after_shift(self):
-        logger.info(msg=f"GAME OBJECT SERVICE: GO TO AFTER SHIFT FUNC")
-        path_region_btn = resource_path(relative_path="app\\img\\game_button\\check_shelter.png")
-        path_shelter_btn = resource_path(relative_path="app\\img\\game_button\\region_button.png")
-
-        while not self.task_manager.stop_event.is_set():
-            coord_region = find_template_matches(path_region_btn)
-            coord_shelter = find_template_matches(path_shelter_btn)
-            if coord_region and not self.task_manager.stop_event.is_set():
-                logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
-                self.clicker_manager.click(coord_region[0][0], coord_region[0][1])
-                time.sleep(3)
-                self.go_to_shelter()
-                time.sleep(2)
-                break
-            elif coord_shelter and not self.task_manager.stop_event.is_set():
-                logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
-                self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
-                time.sleep(3)
-                self.go_to_region()
-                time.sleep(2)
-                self.go_to_shelter()
-                time.sleep(2)
-                break
-            else:
-                self.clicker_manager.press_ecs()
-                time.sleep(3)
-        return
-
-    def hide_discont(self):
-        logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT START")
-        self.go_to_region()
-        path_zombi_icon = resource_path(relative_path="app\\img\\game_button\\zombi-war-icon.png")
-        coord_zombi_war_icon = find_template_matches(path_zombi_icon, threshold=0.8)
-        if coord_zombi_war_icon and not self.task_manager.stop_event.is_set():
-            logger.info(msg="GAME OBJECT SERVICE: GET ZOMBI WAR EVENT")
-            self.clicker_manager.click(coord_zombi_war_icon[0][0], coord_zombi_war_icon[0][1])
-            time.sleep(3)
-            self.clicker_manager.press_ecs()
-            time.sleep(3)
-
-
-
-        path_hide = resource_path(relative_path="app\\windows\\shelter\\daily\\img\\hide_actions.png")
-        coord_hide = find_template_matches(path_hide)
-        if coord_hide:
-            logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT BTN FIND")
-            self.clicker_manager.click(coord_hide[0][0], coord_hide[0][1])
-            time.sleep(1)
-            self.go_to_shelter()
-            time.sleep(3)
-        else:
-            logger.info(msg="GAME OBJECT SERVICE: HIDE DISCONT BTN UNDEFIND")
-            self.go_to_shelter()
 
 # ==================== RADAR ================================= #
     def go_to_radar(self, window):
@@ -1502,10 +1507,10 @@ class GameObjectService():
 
     def check_free_group(self):
         logger.info(msg="GAME OBJECT SERVICE: CHECK MAX GROUPS FUNC")
-        path_55 = resource_path(relative_path="app\\windows\\shelter\\gather\\img\\55.png")
+        path_55 = resource_path(relative_path="app\\img\\game_button\\55.png")
         path_44 = resource_path(relative_path="app\\windows\\shelter\\gather\\img\\44.png")
         path_33 = resource_path(relative_path="app\\windows\\shelter\\gather\\img\\33.png")
-        path_zombi_icon = resource_path(relative_path="app\\img\\game_button\\zombi-war-icon.png")
+        # path_zombi_icon = resource_path(relative_path="app\\img\\game_button\\zombi-war-icon.png")
         find_coord_list = []
         path_list = [
             path_55,
@@ -1513,13 +1518,13 @@ class GameObjectService():
             path_33
         ]
 
-        coord_zombi_war_icon = find_template_matches(path_zombi_icon, threshold=0.8)
-        if coord_zombi_war_icon and not self.task_manager.stop_event.is_set():
-            logger.info(msg="GAME OBJECT SERVICE: GET ZOMBI WAR EVENT")
-            self.clicker_manager.click(coord_zombi_war_icon[0][0], coord_zombi_war_icon[0][1])
-            time.sleep(3)
-            self.clicker_manager.press_ecs()
-            time.sleep(3)
+        # coord_zombi_war_icon = find_template_matches(path_zombi_icon, threshold=0.8)
+        # if coord_zombi_war_icon and not self.task_manager.stop_event.is_set():
+        #     logger.info(msg="GAME OBJECT SERVICE: GET ZOMBI WAR EVENT")
+        #     self.clicker_manager.click(coord_zombi_war_icon[0][0], coord_zombi_war_icon[0][1])
+        #     time.sleep(3)
+        #     self.clicker_manager.press_ecs()
+        #     time.sleep(3)
 
 
         for path in path_list:
@@ -4879,7 +4884,6 @@ class GameObjectService():
             else:
                 break
 
-        print(self.gather_object_list)
 
         while not self.task_manager.stop_event.is_set():
             self.task_manager.app.validator.get_time()
@@ -4919,7 +4923,7 @@ class GameObjectService():
 
     def check_region_screen(self) -> bool:
         logger.info(msg=f"GATHER: CHECK REGION FUNC")
-        path_region_btn = resource_path(relative_path="app\\img\\game_button\\check_shelter.png")
+        path_region_btn = resource_path(relative_path="app\\img\\game_button\\go-region.png")
         coord_region = find_template_matches(path_region_btn)
         if coord_region:
             logger.info(msg=f"GATHER: REGION IN ACTION")
@@ -4997,7 +5001,14 @@ class GameObjectService():
                 self.go_to_region()
                 time.sleep(2)
                 # Клик по поиску
-                self.clicker_manager.proportion_click_in_window(window=window.window, target_x=45, target_y=480)
+                path_loup = resource_path(relative_path="app\\img\\game_button\\loup.png")
+                coord_loup = find_template_matches(path_loup)
+                if coord_loup:
+                    self.clicker_manager.click(coord_loup[0][0], coord_loup[0][1])
+                    time.sleep(2)
+
+
+                # self.clicker_manager.proportion_click_in_window(window=window.window, target_x=45, target_y=480)
                 time.sleep(2)
                 logger.info(msg="GATHER: [STEP-2] GO TO STEP-3 ")
                 return self.gather_step_3(window=window)
@@ -5008,12 +5019,12 @@ class GameObjectService():
                 if self.gather_task['failed_count'] != 0:
                     self.gather_task['failed_count'] = 0
                     logger.info(msg=f"GATHER: [STEP-2] FAILED COUNT DROP TO 0")
-                if has_time_passed(target_datetime=self.gather_task['pause_mission_time'], minutes=60):
-                    logger.info(msg="GATHER: [STEP-2] JOIN PAUSE MISSION TASK")
-                    self.pause_gather(window=window)
-                    self.gather_task['pause_mission_time'] = datetime.datetime.now()
-                    logger.info("GATHER: [STEP-2] FIX new pause mission time %s", self.gather_task['pause_mission_time'])
-                    time.sleep(2)
+                # if has_time_passed(target_datetime=self.gather_task['pause_mission_time'], minutes=60):
+                #     logger.info(msg="GATHER: [STEP-2] JOIN PAUSE MISSION TASK")
+                #     self.pause_gather(window=window)
+                #     self.gather_task['pause_mission_time'] = datetime.datetime.now()
+                #     logger.info("GATHER: [STEP-2] FIX new pause mission time %s", self.gather_task['pause_mission_time'])
+                #     time.sleep(2)
                 else:
                     logger.info(msg="GATHER: [STEP-2] PAUSE MISSION TASK TIME NOT PREPARE")
                 logger.info("GATHER: [STEP-2] SLEEP 30 SEC. OUT GATHER")
@@ -5126,36 +5137,36 @@ class GameObjectService():
 
         logger.info(msg="GATHER: CLICK ON TASK RESOURCE FUNC")
         if task == 'food':
-        # 550 650
+        # 655 645
             self.clicker_manager.proportion_click_in_window(
                 window=window.window,
-                target_x=550,
-                target_y=650
+                target_x=655,
+                target_y=645
                 )
             logger.info(msg="GATHER: CLICK FOOD")
         elif task == "wood":
-        # 715 650
+        # 805 645
             self.clicker_manager.proportion_click_in_window(
                 window=window.window,
-                target_x=715,
-                target_y=650
+                target_x=805,
+                target_y=645
                 )
             logger.info(msg="GATHER: CLICK WOOD")
         elif task == "steel":
-        # 880 650
+        # 945 645
             self.clicker_manager.proportion_click_in_window(
                 window=window.window,
-                target_x=880,
-                target_y=650
+                target_x=945,
+                target_y=645
                 )
             logger.info(msg="GATHER: CLICK STEEL")
 
         elif task == "oil":
-        #  1045 650
+        #  1085 645
             self.clicker_manager.proportion_click_in_window(
                 window=window.window,
-                target_x=1045,
-                target_y=650
+                target_x=1085,
+                target_y=645
                 )
             logger.info(msg="GATHER: CLICK OIL")
 
@@ -5210,7 +5221,7 @@ class GameObjectService():
             # Проверяю кнопка повысить уровень доступна ли
             if self.check_max_lvl_gather():
                 logger.info(msg="GATHER: [STEP-4] LVL RESOURCE MAX. GO TO STEP-5]")
-                self.gather_task['get_lvl'] = 7
+                self.gather_task['get_lvl'] = 6
                 return self.gather_step_5(window)
             else:
                 # Начинаю в цикле подымать уровень до максимального
@@ -5237,13 +5248,12 @@ class GameObjectService():
 
 
                 path_lvl_gather= {
-                        1: resource_path(self.locale.i10n('rally-lvl1')),
-                        2: resource_path(self.locale.i10n('rally-lvl2')),
-                        3: resource_path(self.locale.i10n('rally-lvl3')),
-                        4: resource_path(self.locale.i10n('rally-lvl4')),
-                        5: resource_path(self.locale.i10n('rally-lvl5')),
-                        6: resource_path(self.locale.i10n('rally-lvl6')),
-                        7: resource_path(self.locale.i10n('rally-lvl7')),
+                        1: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl1.png"),
+                        2: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl2.png"),
+                        3: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl3.png"),
+                        4: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl4.png"),
+                        5: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl5.png"),
+                        6: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl6.png")
                 }
 
                 current_lvl = 0
@@ -5289,16 +5299,14 @@ class GameObjectService():
                     # Отключаю тригер понижения уровня т.к уже достингут минимальный уровень, пусть ищет сначала.
                     self.gather_task['lvl_down_task'] = False
                     logger.info(msg="GATHER: [STEP-4] GO TO STEP-5")
-
                     path_lvl_gather= {
-                        1: resource_path(self.locale.i10n('rally-lvl1')),
-                        2: resource_path(self.locale.i10n('rally-lvl2')),
-                        3: resource_path(self.locale.i10n('rally-lvl3')),
-                        4: resource_path(self.locale.i10n('rally-lvl4')),
-                        5: resource_path(self.locale.i10n('rally-lvl5')),
-                        6: resource_path(self.locale.i10n('rally-lvl6')),
-                        7: resource_path(self.locale.i10n('rally-lvl7')),
-                }
+                            1: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl1.png"),
+                            2: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl2.png"),
+                            3: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl3.png"),
+                            4: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl4.png"),
+                            5: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl5.png"),
+                            6: resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvl6.png")
+                    }
 
                     current_lvl = 0
                     for lvl, path in path_lvl_gather.items():
@@ -5423,8 +5431,8 @@ class GameObjectService():
         # НЕАКТУАЛЬНО
         time.sleep(2)
         logger.info(f"GATHER: CLICK - CONTROL MAIN SCREEN")
-        path_region = resource_path(relative_path="app\\img\\game_button\\check_shelter.png")
-        path_shelter = resource_path(relative_path="app\\img\\game_button\\region_button.png")
+        path_region = resource_path(relative_path="app\\img\\game_button\\go-region.png")
+        path_shelter = resource_path(relative_path="app\\img\\game_button\\go-shelter.png")
 
         while not self.task_manager.stop_event.is_set():
             coord_region = find_template_matches(path_region)
@@ -5489,32 +5497,36 @@ class GameObjectService():
 
         resourse_data = {
             "food": {
-                3:480000,
-                4:720000,
-                5:960000,
-                6:1200000,
-                7:1320000
+                1:240000,
+                2:480000,
+                3:960000,
+                4:1440000,
+                5:1920000,
+                6:2400000
                      },
             "wood": {
-                3:480000,
-                4:720000,
-                5:960000,
-                6:1200000,
-                7:1320000
+                1:240000,
+                2:480000,
+                3:960000,
+                4:1440000,
+                5:1920000,
+                6:2400000
                      },
             "steel": {
-                3:240000,
-                4:360000,
-                5:480000,
-                6:600000,
-                7:660000
+                1:240000,
+                2:480000,
+                3:960000,
+                4:1440000,
+                5:1920000,
+                6:2400000
                 },
             "oil": {
-                3:96000,
-                4:144000,
-                5:192000,
-                6:240000,
-                7:264000
+                1:240000,
+                2:480000,
+                3:960000,
+                4:1440000,
+                5:1920000,
+                6:2400000
                 },
         }
         # Клик по кнопке "Марш"
@@ -5537,7 +5549,6 @@ class GameObjectService():
                     'count_gather': resourse_data[self.gather_task['task']][self.gather_task['get_lvl']],
                     'count_task': 1
                 }
-            print(self.gather_task['stat'])
 
             logger.info(msg="GATHER: [STEP-9] GATHER TASK COMLETED, TASK IS EMPTY")
             if self.gather_task['failed_count'] != 0:
