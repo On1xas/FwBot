@@ -87,10 +87,10 @@ class GameObjectService():
             elif coord_shelter := find_template_matches(path_shelter_btn):
                 logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
                 self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
-                time.sleep(3)
+                time.sleep(4)
             else:
                 self.clicker_manager.press_ecs()
-                time.sleep(3)
+                time.sleep(4)
 
     def go_to_after_shift(self):
         logger.info(msg=f"GAME OBJECT SERVICE: GO TO AFTER SHIFT FUNC")
@@ -103,22 +103,22 @@ class GameObjectService():
             if coord_region and not self.task_manager.stop_event.is_set():
                 logger.info(msg=f"GAME OBJECT SERVICE: REGION IN ACTION")
                 self.clicker_manager.click(coord_region[0][0], coord_region[0][1])
-                time.sleep(3)
+                time.sleep(4)
                 self.go_to_shelter()
-                time.sleep(2)
+                time.sleep(4)
                 break
             elif coord_shelter and not self.task_manager.stop_event.is_set():
                 logger.info(msg=f"GAME OBJECT SERVICE: SHELTER IN ACTION")
                 self.clicker_manager.click(coord_shelter[0][0], coord_shelter[0][1])
-                time.sleep(3)
+                time.sleep(4)
                 self.go_to_region()
-                time.sleep(2)
+                time.sleep(4)
                 self.go_to_shelter()
-                time.sleep(2)
+                time.sleep(4)
                 break
             else:
                 self.clicker_manager.press_ecs()
-                time.sleep(3)
+                time.sleep(4)
         return
 
     def hide_discont(self):
@@ -4723,8 +4723,8 @@ class GameObjectService():
         lbl_oil = tk.Label(master=self.choose_window, image=self.img_oil)
         lbl_all_gather = tk.Label(master=self.choose_window, image=self.img_all_gather)
 
-        self.path_select_img = resource_path("app\\windows\\shelter\\healer\\img\\select.png")
-        self.path_unselect_img = resource_path("app\\windows\\shelter\\healer\\img\\unselect.png")
+        self.path_select_img = resource_path("app\\img\\game_button\\select.png")
+        self.path_unselect_img = resource_path("app\\img\\game_button\\unselect.png")
 
         self.var_food = tk.BooleanVar()
         self.var_wood = tk.BooleanVar()
@@ -4939,10 +4939,10 @@ class GameObjectService():
             logger.info(msg="GATHER: [STEP-1] REGION DETECTED. GO TO STEP-2")
             if not self.gather_task['hide_discount']:
                 self.hide_discont()
-                time.sleep(2)
+                time.sleep(3)
                 self.gather_task['hide_discount'] = True
                 self.go_to_region()
-            time.sleep(2)
+            time.sleep(3)
             return self.gather_step_2(window=window)
 
         else:
@@ -4993,19 +4993,18 @@ class GameObjectService():
             logger.info("GATHER: [STEP-2] Additional event is %s", self.gather_task['additional_event_task'])
 
             # Проверка на наличие свободных отрядов
-            self.go_to_shelter()
-            time.sleep(2)
+            time.sleep(3)
             if self.check_free_group():
                 logger.info(msg="GATHER: [STEP-2] FREE TROOPS. - CLICK TO 'POISK' ")
-                time.sleep(1)
-                self.go_to_region()
                 time.sleep(2)
+                self.go_to_region()
+                time.sleep(3)
                 # Клик по поиску
                 path_loup = resource_path(relative_path="app\\img\\game_button\\loup.png")
                 coord_loup = find_template_matches(path_loup)
                 if coord_loup:
                     self.clicker_manager.click(coord_loup[0][0], coord_loup[0][1])
-                    time.sleep(2)
+                    time.sleep(4)
 
 
                 # self.clicker_manager.proportion_click_in_window(window=window.window, target_x=45, target_y=480)
@@ -5182,7 +5181,7 @@ class GameObjectService():
             self.gather_task['task'] = None
             self.gather_task['fail_task'] = False
 
-        if self.gather_task['failed_count'] == 3:
+        if self.gather_task['failed_count'] == 4:
             self.gather_task['fail_task'] = True
             self.gather_task['task'] = random.choice(['food','wood', 'steel', 'oil'])
             logger.info(msg=f"GATHER: [STEP-3] FAILED COUNT MORE 5 - GET ANOTHER TASK {self.gather_task['task']}")
@@ -5194,7 +5193,7 @@ class GameObjectService():
             logger.info(msg=f"GATHER: [STEP-3] GET RANDOM TASK - {self.gather_task['task']}")
 
         logger.info(msg=f"GATHER: [STEP-3] TASK: {self.gather_task['task']}")
-        time.sleep(1)
+        time.sleep(2)
         self.click_on_gather_task(task=self.gather_task['task'], window=window)
         time.sleep(2)
         if self.gather_task['lvl_down_task']:
@@ -5276,7 +5275,7 @@ class GameObjectService():
                 return self.gather_step_5(window)
         # Включен режим понижения. Т.к в предыдущий раз не нашли ресурс нужного уровня
         elif lvl == "down":
-            path_lvl_down = resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvldown_gather.png")
+            path_lvl_down = resource_path(relative_path="app\\windows\\shelter\\gather\\img\\lvldown.png")
             coord_lvl_down = find_template_matches(path_lvl_down)
             time.sleep(0.5)
             # Проверяю нашел ли кнопку минус (понизить уровень)
@@ -5347,10 +5346,11 @@ class GameObjectService():
         if coord_poisk:
             logger.info(msg="GATHER: [STEP-5] CLICK TO YELLOW BUTTON - POISK")
             self.clicker_manager.click(coord_poisk[0][0], coord_poisk[0][1])
-            time.sleep(2)
+            time.sleep(4)
         else:
             logger.error(msg="GATHER: [STEP-5] COORD YELLOW BUTTON - POISK NO DEFINED. GO TO STEP 1")
             self.gather_task['failed_count'] += 1
+            self.gather_task['lvl_down_task'] = True
             self.go_to_region()
             return self.gather_step_1(window=window)
 
@@ -5360,10 +5360,10 @@ class GameObjectService():
     @check_stop_func
     def gather_step_6(self, window: Window):
         # Нажатие по ресурсу просто в центр экрана
-        # 640 390
+        # 655 370
         time.sleep(1)
         logger.info(msg="GATHER: [STEP-6] CLICK TO RESOURCE")
-        self.clicker_manager.proportion_click_in_window(window=window.window, target_x=640, target_y=390)
+        self.clicker_manager.proportion_click_in_window(window=window.window, target_x=655, target_y=370)
         time.sleep(4)
         logger.info(msg="GATHER: [STEP-6] GO TO STEP-7")
         return self.gather_step_7(window)
